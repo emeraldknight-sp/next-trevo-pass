@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Container } from "./container";
-import { LaminatedButton } from "../ui/laminated-button";
+import { LaminatedLink } from "../ui/laminated";
 
 export const Header = () => {
   return (
@@ -16,12 +16,12 @@ export const Header = () => {
             priority
           />
           <div className="flex flex-row gap-2">
-            <LaminatedButton as="a" color="slate" size="sm">
+            <LaminatedLink href="/login" color="slate" size="sm">
               Entrar
-            </LaminatedButton>
-            <LaminatedButton as="a" color="yellow" size="sm">
+            </LaminatedLink>
+            <LaminatedLink href="/register" color="yellow" size="sm">
               Cadastre-se
-            </LaminatedButton>
+            </LaminatedLink>
           </div>
         </div>
       </Container>
