@@ -1,95 +1,134 @@
-import { Gift, Smartphone, Star } from "lucide-react";
-import Image from "next/image";
+import type { Metadata } from "next";
+import { LaminatedButton } from "@/components/ui";
+import { Container, Footer, Header } from "@/components/layout";
+
+export const metadata: Metadata = {
+  title: "Trevo Pass - Programa de Fidelidade Trevo Açaí",
+
+  description:
+    "Trevo Pass é o programa oficial de fidelidade da Trevo Açaí. Acumule pontos a cada compra, resgate recompensas e aproveite benefícios exclusivos em todas as lojas.",
+
+  keywords: [
+    "açaí",
+    "programa de fidelidade",
+    "Trevo Açaí",
+    "pontos",
+    "recompensas",
+    "app de fidelidade",
+    "PWA",
+  ],
+
+  openGraph: {
+    title: "Trevo Pass - Programa de Fidelidade Trevo Açaí",
+    description:
+      "Acumule pontos, resgate recompensas e aproveite benefícios exclusivos com o Trevo Pass.",
+    url: "https://next-trevo-pass.vercel.app",
+    siteName: "Trevo Açaí",
+    images: [
+      {
+        url: "/assets/seo/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Trevo Pass - Programa de Fidelidade Trevo Açaí",
+      },
+    ],
+    locale: "pt_BR",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Trevo Pass - Programa de Fidelidade Trevo Açaí",
+    description:
+      "Acumule pontos, resgate recompensas e aproveite benefícios exclusivos com o Trevo Pass.",
+    images: ["/assets/seo/og-image.png"],
+  },
+
+  alternates: {
+    canonical: "https://next-trevo-pass.vercel.app",
+  },
+};
 
 export default function Home() {
-
   const benefits = [
     {
-      icon: <Star size={48}  />,
+      icon: "/icons/gain-points.png",
       title: "Ganhe Pontos",
-      description: "Compre nas lojas e acumule pontos a cada compra"
+      description: "Compre nas lojas e acumule pontos a cada compra",
+      alt: "",
     },
     {
-      icon: <Gift size={48} />,
+      icon: "/icons/claim-rewards.png",
       title: "Resgate Prêmios",
-      description: "Troque seus pontos por descontos e produtos"
+      description: "Troque seus pontos por descontos e produtos",
+      alt: "",
     },
     {
-      icon: <Smartphone size={48} />,
+      icon: "/icons/exclusive-benefits.png",
       title: "Benefícios Exclusivos",
-      description: "Desbloqueie vantagens especiais e ofertas"
+      description: "Desbloqueie vantagens especiais e ofertas",
+      alt: "",
     },
-  ]
+  ];
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-50 font-sans dark:bg-black">
-      <header className="flex flex-row justify-between items-center w-full p-4 bg-purple-500">
-        <Image
-          src="/images/acai-logo.jpg"
-          className="rounded-full"
-          width={48}
-          height={48}
-          alt="logo trevo acai"
-          priority
-        />
-        <div>
-          <a
-          href="/"
-          className="bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-700 px-6 py-3 rounded-2xl shadow-md transition"
-        >
-          <span className="text-base text-purple-500 font-semibold">Entrar</span>
-        </a>
-         <a
-          href="/"
-          className="bg-[#fec71c] hover:bg-yellow-500 active:bg-yellow-700 px-6 py-3 rounded-2xl shadow-md transition"
-        >
-          <span className="text-base text-purple-500 font-semibold">Cadastre-se</span>
-        </a>
-        </div>
-      </header>
-      <main>
-        <div className="relative w-full h-[500px]">
-
-        <Image
-          src="/images/acai-1-vertical.jpg"
-          className="object-cover"
-          alt="hero trevo pass"
-          priority
-          fill
-        />
-        </div>
-        <a href="" className="bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800 border-md shadow-md">
-          <span className="text-3xl text-purple-800 font-bold">Cadastre-se Agora!</span>
-        </a>
-        <ul className="flex flex-col md:flex-row gap-4
-         items-center justify-center px-4 py-24 md:py-8">
-          {benefits.map((el, index) => (
-
-          <li key={index} className="flex flex-row items-center gap-4 flex-1 bg-gray-200 p-4 rounded-md shadow-md">
-            <span className="text-purple-800">{el.icon}</span>
-            <div className="flex flex-col">
-              <span className="text-xl text-purple-900 font-bold">{el.title}</span>
-              <span className="text-sm text-purple-500 font-normal">{el.description}</span>
-            </div>
-            </li>
-          ))}
-        </ul>
-        <div className="flex flex-col items-center gap-4 w-full">
-          <a href="" className=""><span className="text-purple-600 text-lg font-medium">Acesse sua conta</span></a>
-          <a href="" className="bg-purple-600 px-4 py-2 rounded-full"><span className="text-yellow-500 text-lg font-bold">Criar conta grátis</span></a>
-        </div>
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="w-full bg-slate-100">
+        <Container className="md:p-8 lg:p-12">
+          <div className="flex flex-col gap-8">
+            <picture className="flex flex-col items-center">
+              <source
+                media="(max-width: 768px)"
+                srcSet="/illustrations/hero-mobile.png"
+              />
+              <source
+                media="(max-width: 1200px)"
+                srcSet="/illustrations/hero-tablet.png"
+              />
+              <img
+                src="/illustrations/hero-desktop.png"
+                alt="hero trevo pass"
+                className="max-h-96"
+              />
+            </picture>
+            <LaminatedButton
+              as="a"
+              color="yellow"
+              size="lg"
+              className="text-center max-w-75 mx-auto"
+            >
+              Cadastre-se Agora!
+            </LaminatedButton>
+            <ul
+              className="flex flex-col md:flex-row gap-4
+         items-center justify-between"
+            >
+              {benefits.map((el, index) => (
+                <li
+                  key={index}
+                  className="flex flex-row items-center gap-4 flex-1 w-full bg-slate-200 p-4 rounded-md shadow-md md:flex-col md:gap-2 lg:max-w-75"
+                >
+                  <img
+                    src={el.icon}
+                    className="w-14 md:w-32"
+                    srcSet={`${el.icon.slice(0, -4)}@2x.png 2x,${el.icon.slice(0, -4)}@3x.png 3x`}
+                    alt={el.alt}
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-lg text-violet-900 font-ubuntu font-bold md:text-center">
+                      {el.title}
+                    </span>
+                    <span className="text-xs text-violet-600 font-lato font-normal md:text-center">
+                      {el.description}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Container>
       </main>
-      <footer className="bg-yellow-400 p-4">
-        <div className="flex flex-col gap-1">
-          <span className="text-xs text-purple-600 font-medium">
-            <a href="" className="underline">Termos de uso</a>
-            &nbsp;|&nbsp;
-            <a href="" className="underline">Privacidade</a>
-          </span>
-          <span className="text-xs text-purple-600 font-medium">Versão do app 0.0.1</span>
-          <span className="text-xs text-purple-600 font-medium">Desenvolvido por <a href="">David Almeida</a></span>
-          <span className="text-xs text-purple-600 font-medium">Todos os direitos reservados &copy; {new Date().getFullYear()}</span>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
