@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LaminatedButton } from "@/components/ui";
 import { Container, Footer, Header } from "@/components/layout";
+import { LaminatedLink } from "@/components/ui/laminated";
 
 export const metadata: Metadata = {
   title: "Trevo Pass - Programa de Fidelidade Trevo Açaí",
@@ -91,14 +92,15 @@ export default function Home() {
                 className="max-h-96"
               />
             </picture>
-            <LaminatedButton
-              as="a"
+            <LaminatedLink
+              href="/register"
+              rel="noopener noreferrer"
               color="yellow"
               size="lg"
               className="text-center max-w-75 mx-auto"
             >
               Cadastre-se Agora!
-            </LaminatedButton>
+            </LaminatedLink>
             <ul
               className="flex flex-col md:flex-row gap-4
          items-center justify-between"
