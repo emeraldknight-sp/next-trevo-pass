@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { LaminatedButton } from "@/components/ui";
 import { Container, Footer, Header } from "@/components/layout";
 import { LaminatedLink } from "@/components/ui/laminated";
 
