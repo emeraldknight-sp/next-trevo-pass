@@ -1,9 +1,19 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react"
 import { LaminatedButton } from "@/components/ui/laminated";
-import { Mail, Lock } from 'lucide-react';
+import { Eye, EyeClosed, Mail, Lock } from 'lucide-react';
 
 export default function Login() {
+
+const [isVisible, setIsVisible] = useState(true);
+
+  const handlePasswordVisible = () => {
+    setIsVisible(!isVisible)
+  }
+
   return (
     <div className="flex flex-col justify-center gap-4 h-screen p-4 md:px-8">
       <div className="flex flex-row justify-center items-center gap-2">
@@ -13,6 +23,7 @@ export default function Login() {
           width="36"
           height="36"
           alt="trevo pass logo"
+          priority
         />
         <p className="inline-flex gap-1 text-xl font-bold font-ubuntu">
           <span className="text-violet-900">Trevo</span>
@@ -36,7 +47,13 @@ export default function Login() {
         <div className="flex flex-row items-center gap-1 px-2 py-1 border border-slate-200 rounded-md focus-within:ring-2 focus-within:ring-violet-900" >
           <label htmlFor="password" className="sr-only">Senha</label>
           <Lock size={20} className="text-slate-500" />
-          <input id="password" name="password" type="password" placeholder="Sua senha" className="w-full text-slate-700 placeholder:text-slate-500 outline-none focus:outline-none focus-visible:ring-0 px-2 py-1" autoComplete="password" required />
+          <input id="password" name="password" type={isVisible ? "text" : "password"} placeholder="Sua senha" className="w-full text-slate-700 placeholder:text-slate-500 outline-none focus:outline-none focus-visible:ring-0 px-2 py-1" autoComplete="password" required />
+          <button type="button" className="hover:cursor-pointer outline-none focus-within:outline-none focus-within:ring-0" onClick={handlePasswordVisible}>
+            {isVisible ? 
+              <Eye size={20} className="text-slate-500" /> : 
+              <EyeClosed size={20} className="text-slate-500" />
+            }
+            </button>
         </div>
       <Link href="/" className="text-violet-900 text-right text-xs font-normal font-ubuntu">
         Esqueceu sua senha?
