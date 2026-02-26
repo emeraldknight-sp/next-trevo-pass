@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Container } from "./container";
 
 export const Footer = () => {
@@ -6,7 +7,7 @@ export const Footer = () => {
       <Container className="md:p-8 lg:p-12">
         <div className="flex flex-col items-center">
           <a href="#" rel="noopener noreferrer">
-            <img
+            <Image
               src="/images/logo.png"
               className="w-8 h-8 rounded-full"
               alt="logo"
