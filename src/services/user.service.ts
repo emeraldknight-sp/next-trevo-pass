@@ -1,5 +1,5 @@
-import { db } from "@/lib/firebase";
 import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
+import { db } from "./firebase/firestore";
 
 export const createUserProfile = async (
   uid: string,
@@ -8,7 +8,7 @@ export const createUserProfile = async (
   cpf: string,
   phone: string | null,
 ) => {
-  await setDoc(doc(db, "users", uid), {
+  await setDoc(doc(db, "users", cpf), {
     uid,
     name,
     email,
