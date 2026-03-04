@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, EyeClosed, Lock, Mail, User } from "lucide-react";
+import { Eye, EyeClosed, IdCard, Lock, Mail, Phone, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -8,6 +8,10 @@ import { registerSchema, RegisterSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LaminatedButton } from "@/components/ui/laminated";
 import Link from "next/link";
+import { toast } from "sonner";
+import { registerUserFeature } from "@/features/auth/register-user";
+import { FirebaseError } from "firebase/app";
+import { AppError } from "@/utils/app-error";
 
 export const RegisterForm = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -17,7 +21,6 @@ export const RegisterForm = () => {
   };
 
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -26,22 +29,42 @@ export const RegisterForm = () => {
   } = useForm<RegisterSchema>({ resolver: zodResolver(registerSchema) });
 
   const onSubmit = async (data: RegisterSchema) => {
-    setError(null);
+    try {
+      const user = await registerUserFeature(data);
+      toast.success("Conta criada com sucesso!", { id: "register-success" });
+      router.push("/dashboard");
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        console.error(error);
 
-    console.log("REGISTER - DATA:", data);
+        switch (error.code) {
+          case "auth/email-already-in-use":
+            toast.error("Este e-mail já está em uso.", {
+              id: "email-already-in-use",
+            });
+            break;
 
-    // const res = await fetch("/api/auth/register", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(data)
-    // });
+          case "auth/invalid-email":
+            toast.error("E-mail inválido.", { id: "invalid-email" });
+            break;
 
-    // if (!res.ok) {
-    //   setError("Falha ao criar conta");
-    //   return;
-    // }
+          case "auth/weak-password":
+            toast.error("Senha muito fraca.", { id: "weak-password" });
+            break;
 
-    // router.push("/");
+          default:
+            toast.error("Erro ao criar conta.", { id: "register-error" });
+            console.error(error.code, error.message);
+        }
+      } else {
+        console.error(error);
+
+        if (error instanceof AppError) {
+          toast.error(error.message, { id: "register-error" });
+          return;
+        }
+      }
+    }
   };
 
   return (
@@ -86,6 +109,48 @@ export const RegisterForm = () => {
           {errors.email && (
             <span className="text-red-500 text-xs font-ubuntu">
               {errors.email.message}
+            </span>
+          )}
+        </div>
+        <div>
+          <div className="flex flex-row items-center gap-1 px-2 py-1 border border-slate-200 rounded-md focus-within:ring-2 focus-within:ring-violet-900">
+            <label htmlFor="phone" className="sr-only">
+              Telefone
+            </label>
+            <Phone size={20} className="text-slate-500" aria-hidden="true" />
+            <input
+              type="phone"
+              placeholder="Informe seu telefone"
+              className="w-full text-slate-700 placeholder:text-slate-500 outline-none focus:outline-none focus-visible:ring-0 px-2 py-1"
+              autoComplete="telefone"
+              required
+              {...register("phone")}
+            />
+          </div>
+          {errors.phone && (
+            <span className="text-red-500 text-xs font-ubuntu">
+              {errors.phone.message}
+            </span>
+          )}
+        </div>
+        <div>
+          <div className="flex flex-row items-center gap-1 px-2 py-1 border border-slate-200 rounded-md focus-within:ring-2 focus-within:ring-violet-900">
+            <label htmlFor="cpf" className="sr-only">
+              CPF
+            </label>
+            <IdCard size={20} className="text-slate-500" aria-hidden="true" />
+            <input
+              type="cpf"
+              placeholder="Informe seu CPF"
+              className="w-full text-slate-700 placeholder:text-slate-500 outline-none focus:outline-none focus-visible:ring-0 px-2 py-1"
+              autoComplete="cpf"
+              required
+              {...register("cpf")}
+            />
+          </div>
+          {errors.cpf && (
+            <span className="text-red-500 text-xs font-ubuntu">
+              {errors.cpf.message}
             </span>
           )}
         </div>
@@ -163,7 +228,7 @@ export const RegisterForm = () => {
           onClick={handleSubmit(onSubmit)}
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Processando" : "Criar conta"}
+          {isSubmitting ? "Processando..." : "Criar conta"}
         </LaminatedButton>
       </form>
     </>
