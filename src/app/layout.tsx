@@ -1,6 +1,8 @@
-import type { Metadata } from "next";
-import { Inter, Lato, Ubuntu } from "next/font/google";
 import "./globals.css";
+import type { Metadata } from "next";
+import { AuthProvider } from "@/contexts/auth-context";
+import { Inter, Lato, Ubuntu } from "next/font/google";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -94,7 +96,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className="scroll-smooth">
-      <body className={`${inter.variable} ${lato.variable} ${ubuntu.variable} bg-slate-100 antialiased`}>{children}</body>
+      <body className={`${inter.variable} ${lato.variable} ${ubuntu.variable} bg-slate-100 antialiased`}>
+        <AuthProvider>
+          <Toaster position="top-right" />
+          {children}
+        </AuthProvider>
+        </body>
     </html>
   );
 }
