@@ -1,17 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { Eye, EyeClosed, IdCard, Lock, Mail, Phone, User } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { LaminatedButton } from "@/components/ui/laminated";
+import { handlerError } from "@/utils/handler-error";
+import { registerSchema, RegisterSchema } from "./schema";
+import { registerUserFeature } from "@/features/auth/register-user";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { registerSchema, RegisterSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LaminatedButton } from "@/components/ui/laminated";
-import Link from "next/link";
-import { toast } from "sonner";
-import { registerUserFeature } from "@/features/auth/register-user";
-import { FirebaseError } from "firebase/app";
-import { AppError } from "@/utils/app-error";
 
 export const RegisterForm = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -30,67 +30,29 @@ export const RegisterForm = () => {
 
   const onSubmit = async (data: RegisterSchema) => {
     try {
-      const user = await registerUserFeature(data);
+      await registerUserFeature(data);
       toast.success("Conta criada com sucesso!", { id: "register-success" });
       router.push("/dashboard");
     } catch (error) {
-      if (error instanceof FirebaseError) {
-        console.error(error);
-
-        switch (error.code) {
-          case "auth/email-already-in-use":
-            toast.error("Este e-mail já está em uso.", {
-              id: "email-already-in-use",
-            });
-            break;
-
-          case "auth/invalid-email":
-            toast.error("E-mail inválido.", { id: "invalid-email" });
-            break;
-
-          case "auth/weak-password":
-            toast.error("Senha muito fraca.", { id: "weak-password" });
-            break;
-
-          default:
-            toast.error("Erro ao criar conta.", { id: "register-error" });
-            console.error(error.code, error.message);
-        }
-      } else {
-        console.error(error);
-
-        if (error instanceof AppError) {
-          toast.error(error.message, { id: "register-error" });
-          return;
-        }
-      }
+      handlerError(error);
     }
   };
 
   return (
     <>
       <form className="flex flex-col gap-2 w-full max-w-75">
-        <div>
-          <div className="flex flex-row items-center gap-1 px-2 py-1 border border-slate-200 rounded-md focus-within:ring-2 focus-within:ring-violet-900">
-            <label htmlFor="name" className="sr-only">
-              Seu nome
-            </label>
+        <Input
+          label="Seu nome e sobrenome"
+          name="name"
+          icon={
             <User size={20} className="text-slate-500" aria-hidden="true" />
-            <input
-              type="name"
-              placeholder="Seu nome e sobrenome"
-              className="w-full text-slate-700 placeholder:text-slate-500 outline-none focus:outline-none focus-visible:ring-0 px-2 py-1"
-              autoComplete="name"
-              required
-              {...register("name")}
-            />
-          </div>
-          {errors.name && (
-            <span className="text-red-500 text-xs font-ubuntu">
-              {errors.name.message}
-            </span>
-          )}
-        </div>
+          }
+          placeholder="Seu nome e sobrenome"
+          type="text"
+          register={register}
+          errors={errors}
+          required
+        />
         <div>
           <div className="flex flex-row items-center gap-1 px-2 py-1 border border-slate-200 rounded-md focus-within:ring-2 focus-within:ring-violet-900">
             <label htmlFor="email" className="sr-only">

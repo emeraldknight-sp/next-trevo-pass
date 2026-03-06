@@ -1,13 +1,16 @@
 "use client";
 
+import Link from "next/link";
+import { Eye, EyeClosed, Lock, Mail } from "lucide-react";
+import { LaminatedButton } from "@/components/ui/laminated";
 import { LoginSchema, loginSchema } from "./schema";
+import { handlerError } from "@/utils/handler-error";
+import { loginUser } from "@/services/auth.service";
+import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeClosed, Lock, Mail } from "lucide-react";
-import { LaminatedButton } from "@/components/ui/laminated";
-import Link from "next/link";
 
 export const LoginForm = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -28,20 +31,14 @@ export const LoginForm = () => {
   const onSubmit = async (data: LoginSchema) => {
     setError(null);
 
-    console.log("DATA: ", data);
+    try {
+      await loginUser(data.email, data.password)
+      toast.success("Bem-vindo!", {id: "welcome"})
+    } catch (error) {
+      handlerError(error)
+    }
 
-    // const res = await fetch("/api/auth/login", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(data),
-    // });
-
-    // if (!res.ok) {
-    //   setError("Credenciais invalidas");
-    //   return;
-    // }
-
-    // router.push("/");
+    router.replace("/dashboard");
   };
 
   return (
