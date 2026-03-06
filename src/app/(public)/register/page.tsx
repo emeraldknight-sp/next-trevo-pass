@@ -7,7 +7,7 @@ import { RegisterForm } from "./register-form";
 export default function Register() {
   return (
     <>
-      <div className="flex flex-col justify-center items-center gap-4 h-full p-4 md:px-8">
+      <div className="flex flex-col justify-center items-center gap-4 h-screen p-4 md:px-8">
         <Link href="/" rel="noopener noreferrer" className="flex flex-row justify-center items-center gap-2">
           <Image
             src="/images/logo.png"
