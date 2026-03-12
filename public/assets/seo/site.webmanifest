@@ -4,8 +4,8 @@
   "description": "Programa oficial de fidelidade da Trevo Açaí",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#501843",
+  "background_color": "#5d0ec0",
+  "theme_color": "#5d0ec0",
   "orientation": "portrait",
   "icons": [
     {
