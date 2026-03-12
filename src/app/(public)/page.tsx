@@ -94,7 +94,6 @@ export default function Home() {
             </picture>
             <LaminatedLink
               href="/register"
-              rel="noopener noreferrer"
               color="yellow"
               size="lg"
               className="text-center max-w-75 mx-auto"

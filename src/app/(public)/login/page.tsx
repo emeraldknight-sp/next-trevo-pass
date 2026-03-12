@@ -9,7 +9,6 @@ export default function Login() {
     <div className="flex flex-col justify-center items-center gap-4 h-screen p-4 md:px-8">
       <Link
         href="/"
-        rel="noopener noreferrer"
         className="flex flex-row justify-center items-center gap-2"
       >
         <Image
@@ -45,7 +44,6 @@ export default function Login() {
         <Link
           href="/register"
           className="border-2 border-violet-900 text-center rounded-md px-4 py-1.5"
-          rel="noopener noreferrer"
         >
           <span className="text-violet-900 text-base font-bold font-ubuntu">
             Criar conta

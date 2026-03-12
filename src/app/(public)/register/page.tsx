@@ -8,7 +8,7 @@ export default function Register() {
   return (
     <>
       <div className="flex flex-col justify-center items-center gap-4 h-screen p-4 md:px-8">
-        <Link href="/" rel="noopener noreferrer" className="flex flex-row justify-center items-center gap-2">
+        <Link href="/" className="flex flex-row justify-center items-center gap-2">
           <Image
             src="/images/logo.png"
             className="rounded-full"
@@ -39,7 +39,7 @@ export default function Register() {
             </span>
             <span className="border-b border-slate-300 flex-1"></span>
           </div>
-          <Link href="/login" className="text-center" rel="noopener noreferrer">
+          <Link href="/login" className="text-center">
             <span className="text-violet-900 text-base underline font-bold font-ubuntu">
               Entrar
             </span>
@@ -49,7 +49,7 @@ export default function Register() {
             <Link
               href="/"
               className="text-violet-900 font-bold font-ubuntu underline cursor-pointer"
-              rel="noopener noreferrer"
+            
             >
               Termos de Servico
             </Link>{" "}
@@ -57,7 +57,7 @@ export default function Register() {
             <Link
               href="/"
               className="text-violet-900 font-bold font-ubuntu underline cursor-pointer"
-              rel="noopener noreferrer"
+            
             >
               Politica de Privacidade
             </Link>

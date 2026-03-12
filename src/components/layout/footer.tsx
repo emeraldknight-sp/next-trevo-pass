@@ -9,7 +9,7 @@ export const Footer = () => {
     <footer className="w-full bg-yellow-400">
       <Container className="md:p-8 lg:p-12">
         <div className="flex flex-col items-center">
-          <Link href="#" rel="noopener noreferrer">
+          <Link href="#">
             <Image
               src="/images/logo.png"
               className="w-8 h-8 rounded-full"
@@ -57,7 +57,7 @@ export const Footer = () => {
             Versão do app 0.0.1
           </span>
           <span className="text-xs text-violet-700 font-medium">
-            Desenvolvido por <a href="/" className="underline" rel="noopener noreferrer">David Almeida</a>
+            Desenvolvido por <a href="/" className="underline">David Almeida</a>
           </span>
           <span className="text-xs text-violet-700 font-medium">
             Todos os direitos reservados &copy;{currentYear}

@@ -98,7 +98,7 @@ export default function RootLayout({
     <html lang="pt-BR" className="scroll-smooth">
       <body className={`${inter.variable} ${lato.variable} ${ubuntu.variable} bg-slate-100 antialiased`}>
         <AuthProvider>
-          <Toaster position="top-right" />
+          <Toaster position="bottom-right" />
           {children}
         </AuthProvider>
         </body>
