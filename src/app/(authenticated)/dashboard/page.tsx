@@ -1,15 +1,9 @@
 "use client";
 
 import { ChevronRight, Clover, Gift, } from "lucide-react";
-import { logoutUser } from "@/services/auth.service";
-import { toast } from "sonner";
 import Link from "next/link";
 
 export default function Dashboard() {
-  const handleLogout = () => {
-    logoutUser();
-    toast.success("Saiu da conta!", {id: "logout-user"})
-  };
 
   return (
     <div className="flex flex-col items-center justify-center gap-4 p-4">
@@ -19,7 +13,7 @@ export default function Dashboard() {
         <p>Barra de progresso aqui</p>
         <span className="text-xs text-slate-100 font-ubuntu font-medium">260 pts para virar VIP</span>
       </section>
-      <ul className="flex flex-row justify-between w-full gap-2">
+      <ul className="flex flex-row justify-around w-full gap-2">
         <li className="bg-red-500 flex flex-col items-center rounded-md p-2">
           <p>Icone</p>
           <p className="text-slate-100 text-sm">Escanear</p>

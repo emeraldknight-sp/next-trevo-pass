@@ -75,8 +75,8 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="w-full bg-slate-100">
-        <Container className="md:p-8 lg:p-12">
-          <div className="flex flex-col gap-8">
+        <Container>
+          <div className="flex flex-col gap-8 p-4 md:p-8 lg:p-12">
             <picture className="flex flex-col items-center">
               <source
                 media="(max-width: 768px)"
