@@ -5,8 +5,8 @@ import { LaminatedLink } from "../ui/laminated";
 export const Header = () => {
   return (
     <header className="w-full bg-violet-800">
-      <Container className="md:px-8 md:py-6 lg:px-12">
-        <div className="flex flex-row justify-between items-center">
+      <Container>
+        <div className="flex flex-row justify-between items-center p-4 md:px-8 md:py-6 lg:px-12">
           <Image
             src="/images/logo.png"
             className="rounded-full"
