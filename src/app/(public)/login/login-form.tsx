@@ -5,7 +5,7 @@ import { Eye, EyeClosed, Lock, Mail } from "lucide-react";
 import { LaminatedButton } from "@/components/ui/laminated";
 import { LoginSchema, loginSchema } from "./schema";
 import { handlerError } from "@/utils/handler-error";
-import { loginUser } from "@/services/auth.service";
+import { loginUser } from "@/features/auth/repositories/auth.repository";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -20,7 +20,6 @@ export const LoginForm = () => {
   };
 
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -29,16 +28,14 @@ export const LoginForm = () => {
   } = useForm<LoginSchema>({ resolver: zodResolver(loginSchema) });
 
   const onSubmit = async (data: LoginSchema) => {
-    setError(null);
-
     try {
-      await loginUser(data.email, data.password)
-      toast.success("Bem-vindo!", {id: "welcome"})
+      await loginUser(data.email, data.password);
+      toast.success("Bem-vindo!", { id: "welcome" });
+      router.replace("/dashboard");
     } catch (error) {
-      handlerError(error)
+      handlerError(error);
+      return;
     }
-
-    router.replace("/dashboard");
   };
 
   return (

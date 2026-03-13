@@ -6,12 +6,12 @@ import { Input } from "@/components/ui/input";
 import { LaminatedButton } from "@/components/ui/laminated";
 import { handlerError } from "@/utils/handler-error";
 import { registerSchema, RegisterSchema } from "./schema";
-import { registerUserFeature } from "@/features/auth/register-user";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createAuthController } from "@/features/auth/controllers/auth.controller";
 
 export const RegisterForm = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -30,11 +30,12 @@ export const RegisterForm = () => {
 
   const onSubmit = async (data: RegisterSchema) => {
     try {
-      await registerUserFeature(data);
-      toast.success("Conta criada com sucesso!", { id: "register-success" });
+      await createAuthController(data);
+      toast.success("Conta criada com sucesso!", { id: "register-success" })
       router.push("/dashboard");
-    } catch (error) {
-      handlerError(error);
+    } catch (error: unknown) {
+      handlerError(error)
+      return;
     }
   };
 
@@ -187,6 +188,7 @@ export const RegisterForm = () => {
           Esqueceu sua senha?
         </Link>
         <LaminatedButton
+          type="button"
           onClick={handleSubmit(onSubmit)}
           disabled={isSubmitting}
         >
