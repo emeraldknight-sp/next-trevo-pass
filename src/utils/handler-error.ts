@@ -30,7 +30,7 @@ export const handlerError = (error: unknown) => {
     toast.error(error.message, { id: error.code });
 
     console.error(error);
-    return error;
+    throw error;
   } else {
     const message =
       error instanceof Error ? error.message : "Erro desconhecido";
