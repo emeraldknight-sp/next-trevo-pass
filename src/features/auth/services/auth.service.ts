@@ -1,29 +1,25 @@
+import { UserForm } from "@/@types";
 import { checkDuplicate } from "@/utils/check-duplicate";
-import { registerUser } from "../repositories/auth.repository";
-import { normalizedCpf } from "@/utils/normalize-cpf";
+import { createUserService } from "@/features/users/services/user.service";
+import { normalizeCpf } from "@/utils/normalize-cpf";
 import { normalizePhone } from "@/utils/normalize-phone";
-import { createUserController } from "@/features/users/controllers/user.controller";
+import { registerUser } from "../repositories/auth.repository";
 
-export async function createAuthService(data: {
-  name: string;
-  email: string;
-  password: string;
-  cpf: string;
-  phone: string | null;
-}) {
-  const phone = normalizePhone(data.phone);
-  const cpf = normalizedCpf(data.cpf);
+export async function createAuthService(data: UserForm) {
+  const { phone, cpf, email, password } = data;
+
+  const normalizedPhone = normalizePhone(phone);
+  const normalizedCpf = normalizeCpf(cpf);
   await checkDuplicate({ phone, cpf });
-  
-  const userCredential = await registerUser(data.email, data.password);
+
+  const userCredential = await registerUser(email, password);
   const uid = userCredential.user.uid;
 
-  const user = await createUserController({
+  const user = await createUserService({
+    ...data,
     uid,
-    name: data.name,
-    email: data.email,
-    cpf,
-    phone
+    cpf: normalizedCpf,
+    phone: normalizedPhone,
   });
 
   return user;
