@@ -1,1 +1,1 @@
-export const normalizedCpf = (cpf: string) => cpf.replace(/\D/g, "");
+export const normalizeCpf = (cpf: string) => cpf.replace(/\D/g, "");
