@@ -1,25 +1,9 @@
+import { UserFirestore } from "@/@types";
 import { db } from "@/lib/firebase/firestore";
-import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
-export const createUserRepository = async (
-  uid: string,
-  name: string,
-  email: string,
-  cpf: string,
-  phone: string | null,
-) => {
-  const document = await setDoc(doc(db, "users", uid), {
-    uid,
-    name,
-    email,
-    cpf,
-    phone,
-    points: 0,
-    totalPointsEarned: 0,
-    level: "bronze",
-    createdAt: Timestamp.now(),
-    updatedAt: Timestamp.now(),
-  });
+export const createUserRepository = async (user: UserFirestore) => {
+  await setDoc(doc(db, "users", user.uid), user);
 };
 
 export const getUserByIdRepository = async (uid: string) => {
