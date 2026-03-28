@@ -6,13 +6,14 @@ import {
   getUsersService,
   updateUserService,
 } from "../services/user.service";
+import { handlerError } from "@/utils/handler-error";
 
 export async function createUserController(data: UserBase) {
   try {
     const user = await createUserService(data);
     return user;
   } catch (error: unknown) {
-    throw error;
+    handlerError(error);
   }
 }
 
@@ -21,7 +22,7 @@ export async function getUsersController() {
     const users = await getUsersService();
     return users;
   } catch (error: unknown) {
-    throw error;
+    handlerError(error);
   }
 }
 
@@ -30,7 +31,7 @@ export async function getUserByIdController(userId: string) {
     const user = await getUserByIdService(userId);
     return user;
   } catch (error: unknown) {
-    throw error;
+    handlerError(error);
   }
 }
 
@@ -39,7 +40,7 @@ export async function updateUserController(userId: string, data: UserUpdate) {
     const updatedUser = await updateUserService(userId, data);
     return updatedUser;
   } catch (error: unknown) {
-    throw error;
+    handlerError(error);
   }
 }
 
@@ -48,6 +49,6 @@ export async function deleteUserController(userId: string) {
     const deletedUser = await deleteUserService(userId);
     return deletedUser;
   } catch (error: unknown) {
-    throw error;
+    handlerError(error);
   }
 }

@@ -6,12 +6,17 @@ import {
   doc,
   getDoc,
   getDocs,
+  serverTimestamp,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
 
+const USERS_COLLECTION = "users";
+
+const usersCollection = () => collection(db, USERS_COLLECTION);
+
 export async function createUserRepository(user: UserCreate) {
-  const ref = doc(db, "users", user.id);
+  const ref = doc(db, USERS_COLLECTION, user.id);
 
   await setDoc(ref, user);
 
@@ -19,7 +24,7 @@ export async function createUserRepository(user: UserCreate) {
 }
 
 export async function getUsersRepository(): Promise<UserRead[]> {
-  const snapshot = await getDocs(collection(db, "users"));
+  const snapshot = await getDocs(usersCollection());
 
   return snapshot.docs.map((doc) => ({
     id: doc.id,
@@ -28,7 +33,7 @@ export async function getUsersRepository(): Promise<UserRead[]> {
 }
 
 export async function getUserByIdRepository(uid: string) {
-  const ref = doc(db, "users", uid);
+  const ref = doc(db, USERS_COLLECTION, uid);
   const snap = await getDoc(ref);
 
   if (!snap.exists()) return null;
@@ -37,28 +42,17 @@ export async function getUserByIdRepository(uid: string) {
 }
 
 export async function updateUserRepository(uid: string, data: UserUpdate) {
-  const ref = doc(db, "users", uid);
+  const ref = doc(db, USERS_COLLECTION, uid);
 
-  const snap = await getDoc(ref);
+  await updateDoc(ref, { ...data, updatedAt: serverTimestamp() });
 
-  if (!snap.exists()) {
-    throw new Error("Usuario nao encontrado");
-  }
+  const updatedDoc = await getDoc(ref);
 
-  await updateDoc(ref, data);
-
-  const updatedSnap = await getDoc(ref);
-
-  return updatedSnap;
+  return { id: updatedDoc.id, ...updatedDoc.data() } as UserRead;
 }
 
 export async function deleteUserRepository(uid: string) {
-  const ref = doc(db, "users", uid);
-  const snap = await getDoc(ref);
-
-  if (!snap.exists()) {
-    throw new Error("Usuario nao encontrado");
-  }
+  const ref = doc(db, USERS_COLLECTION, uid);
 
   await deleteDoc(ref);
 

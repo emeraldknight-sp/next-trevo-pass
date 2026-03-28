@@ -1,4 +1,4 @@
-import { UserBase, UserCreate, UserUpdate } from "@/@types";
+import { UserBase, UserCreate, UserRead, UserUpdate } from "@/@types";
 import {
   createUserRepository,
   deleteUserRepository,
@@ -6,18 +6,19 @@ import {
   getUsersRepository,
   updateUserRepository,
 } from "../repositories/user.repository";
+import { checkDuplicate } from "@/utils/check-duplicate";
 import { normalizeCpf } from "@/utils/normalize-cpf";
 import { normalizePhone } from "@/utils/normalize-phone";
+import { sanitizeUser, sanitizeUsers } from "../../../utils/sanitize-user";
 import { serverTimestamp } from "firebase/firestore";
-import { checkDuplicate } from "@/utils/check-duplicate";
 
 export async function createUserService(data: UserBase) {
   const { cpf, phone, role, id, ...rest } = data;
 
-  const normalizedPhone = normalizePhone(phone)
-  const normalizedCpf = normalizeCpf(cpf)
+  const normalizedPhone = normalizePhone(phone);
+  const normalizedCpf = normalizeCpf(cpf);
 
-  await checkDuplicate(normalizedPhone, normalizedCpf)
+  await checkDuplicate(normalizedPhone, normalizedCpf);
 
   const user: UserCreate = {
     ...rest,
@@ -35,19 +36,17 @@ export async function createUserService(data: UserBase) {
 
   await createUserRepository(user);
 
-  return user;
+  return {
+    ...sanitizeUser(user as UserRead),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
 }
 
 export async function getUsersService() {
   const users = await getUsersRepository();
 
-  if (!users || users.length === 0) {
-    return [];
-  }
-
-  const safeUsers = users.map(({ cpf, email, phone, ...user }) => user);
-
-  return safeUsers;
+  return sanitizeUsers(users);
 }
 
 export async function getUserByIdService(userId: string) {
@@ -61,31 +60,24 @@ export async function getUserByIdService(userId: string) {
     throw new Error("Usuario nao encontrado");
   }
 
-  const { cpf, email, phone, ...safeUser } = user;
-
-  return safeUser;
+  return sanitizeUser(user);
 }
 
 export async function updateUserService(userId: string, data: UserUpdate) {
-  if (!userId) {
-    throw new Error("ID do usuario eh obrigatorio");
-  }
-
-  const user = await getUserByIdService(userId);
-
-  if (!user) throw new Error("Usuario nao encontrado");
-
-  if (data.role && data.role !== user.role) {
-    throw new Error("Nao eh permitido alterar o role de usuario");
-  }
-
-  if (!data || Object.keys(data).length === 0) {
+  if (!userId) throw new Error("ID do usuario eh obrigatorio");
+  if (!data || Object.keys(data).length === 0)
     throw new Error("Nenhum dado para atualizar");
+
+  const existingUser = await getUserByIdService(userId);
+  if (!existingUser) throw new Error("Usuario nao encontrado");
+
+  if (data.role && data.role !== existingUser.role) {
+    throw new Error("Nao eh permitido alterar o role de usuario");
   }
 
   const updatedUser = await updateUserRepository(userId, data);
 
-  return updatedUser;
+  return sanitizeUser(updatedUser);
 }
 
 export async function deleteUserService(userId: string) {
