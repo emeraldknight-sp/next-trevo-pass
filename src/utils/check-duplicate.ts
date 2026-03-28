@@ -2,13 +2,7 @@ import { db } from "@/lib/firebase/firestore";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { AppError } from "./app-error";
 
-export const checkDuplicate = async ({
-  cpf,
-  phone,
-}: {
-  cpf: string;
-  phone: string;
-}) => {
+export const checkDuplicate = async (phone: string, cpf: string) => {
   const usersRef = collection(db, "users");
 
   const [phoneSnapshot, cpfSnapshot] = await Promise.all([
@@ -19,16 +13,12 @@ export const checkDuplicate = async ({
   const duplicatePhone = !phoneSnapshot.empty;
   const duplicateCpf = !cpfSnapshot.empty;
 
-  if (duplicatePhone) 
+  if (duplicatePhone)
     throw new AppError(
       "auth/phone-already-in-use",
       "Este telefone já está em uso.",
     );
 
   if (duplicateCpf)
-    throw new AppError(
-      "auth/cpf-already-in-use",
-      "Este CPF já está em uso.",
-    );
-
+    throw new AppError("auth/cpf-already-in-use", "Este CPF já está em uso.");
 };
