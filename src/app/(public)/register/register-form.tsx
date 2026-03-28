@@ -4,14 +4,19 @@ import Link from "next/link";
 import { Eye, EyeClosed, IdCard, Lock, Mail, Phone, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { LaminatedButton } from "@/components/ui/laminated";
+import { UserBase } from "@/@types";
+import { checkDuplicate } from "@/utils/check-duplicate";
+import { createAuthController } from "@/features/auth/controllers/auth.controller";
+import { createUserController } from "@/features/users/controllers/user.controller";
 import { handlerError } from "@/utils/handler-error";
+import { normalizeCpf } from "@/utils/normalize-cpf";
+import { normalizePhone } from "@/utils/normalize-phone";
 import { registerSchema, RegisterSchema } from "./schema";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createAuthController } from "@/features/auth/controllers/auth.controller";
 
 export const RegisterForm = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -30,11 +35,26 @@ export const RegisterForm = () => {
 
   const onSubmit = async (data: RegisterSchema) => {
     try {
-      await createAuthController(data);
-      toast.success("Conta criada com sucesso!", { id: "register-success" })
+      const { email, password, phone, cpf } = data;
+
+      const normalizedPhone = normalizePhone(phone);
+      const normalizedCpf = normalizeCpf(cpf);
+
+      await checkDuplicate(normalizedPhone, normalizedCpf);
+
+      const { uid } = await createAuthController(email, password);
+
+      const newUser: UserBase = {
+        id: uid,
+        ...data
+      }
+
+      await createUserController(newUser);
+
+      toast.success("Conta criada com sucesso!", { id: "register-success" });
       router.push("/dashboard");
     } catch (error: unknown) {
-      handlerError(error)
+      handlerError(error);
       return;
     }
   };

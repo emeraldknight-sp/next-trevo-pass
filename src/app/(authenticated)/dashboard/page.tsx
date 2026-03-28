@@ -14,10 +14,12 @@ export default function Dashboard() {
         <span className="text-xs text-slate-100 font-ubuntu font-medium">260 pts para virar VIP</span>
       </section>
       <ul className="flex flex-row justify-around w-full gap-2">
-        <li className="bg-red-500 flex flex-col items-center rounded-md p-2">
-          <p>Icone</p>
-          <p className="text-slate-100 text-sm">Escanear</p>
-        </li>
+        <Link href="/reader">
+          <li className="bg-red-500 flex flex-col items-center rounded-md p-2">
+            <p>Icone</p>
+            <p className="text-slate-100 text-sm">Escanear</p>
+          </li>
+        </Link>
         <li className="bg-green-500 flex flex-col items-center rounded-md p-2">
           <p>Icone</p>
           <p className="text-slate-100 text-sm">Ver lojas</p>

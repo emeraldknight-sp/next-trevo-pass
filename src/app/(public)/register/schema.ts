@@ -7,7 +7,11 @@ export const registerSchema = z
       .string()
       .min(1, "Por favor, informe seu e-mail.")
       .email("Digite um e-mail válido para continuar."),
-    phone: z.string().nullable(),
+    phone: z
+      .string()
+      .min(1, "Por favor, informe seu telefone.")
+      .max(11, "Numero de telefone inválido")
+      .regex(/^\(?\d{2}\)?\s?9\d{4}-?\d{4}$/, "Telefone inválido"),
     cpf: z
       .string()
       .min(11, "CPF incompleto")
