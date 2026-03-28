@@ -1,14 +1,26 @@
-import { UserFirestore } from "@/@types";
+import { UserCreate, UserIdentity, UserUpdate } from "@/@types";
 import {
   createUserService,
+  deleteUserService,
   getUserByIdService,
+  getUsersService,
+  updateUserService,
 } from "../services/user.service";
 
-export async function createUserController(data: UserFirestore) {
+export async function createUserController(data: UserCreate) {
   try {
     const user = await createUserService(data);
     return user;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    throw error;
+  }
+}
+
+export async function getUsersController() {
+  try {
+    const users = await getUsersService();
+    return users;
+  } catch (error: unknown) {
     throw error;
   }
 }
@@ -17,7 +29,25 @@ export async function getUserByIdController(userId: string) {
   try {
     const user = await getUserByIdService(userId);
     return user;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    throw error;
+  }
+}
+
+export async function updateUserController(userId: string, data: UserUpdate) {
+  try {
+    const updatedUser = await updateUserService(userId, data);
+    return updatedUser;
+  } catch (error: unknown) {
+    throw error;
+  }
+}
+
+export async function deleteUserController(userId: string) {
+  try {
+    const deletedUser = await deleteUserService(userId);
+    return deletedUser;
+  } catch (error: unknown) {
     throw error;
   }
 }
