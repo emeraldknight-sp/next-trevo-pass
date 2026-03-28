@@ -1,4 +1,4 @@
-import { UserCreate, UserIdentity, UserUpdate } from "@/@types";
+import { UserBase, UserCreate, UserUpdate } from "@/@types";
 import {
   createUserRepository,
   deleteUserRepository,
@@ -11,8 +11,8 @@ import { normalizePhone } from "@/utils/normalize-phone";
 import { serverTimestamp } from "firebase/firestore";
 import { checkDuplicate } from "@/utils/check-duplicate";
 
-export async function createUserService(data: UserCreate) {
-  const { cpf, phone, role, ...rest } = data;
+export async function createUserService(data: UserBase) {
+  const { cpf, phone, role, id, ...rest } = data;
 
   const normalizedPhone = normalizePhone(phone)
   const normalizedCpf = normalizeCpf(cpf)
@@ -21,6 +21,7 @@ export async function createUserService(data: UserCreate) {
 
   const user: UserCreate = {
     ...rest,
+    id: id!,
     cpf: normalizedCpf,
     phone: normalizedPhone,
     points: 0,

@@ -1,4 +1,4 @@
-import { UserCreate, UserIdentity, UserUpdate } from "@/@types";
+import { UserBase, UserUpdate } from "@/@types";
 import {
   createUserService,
   deleteUserService,
@@ -7,7 +7,7 @@ import {
   updateUserService,
 } from "../services/user.service";
 
-export async function createUserController(data: UserCreate) {
+export async function createUserController(data: UserBase) {
   try {
     const user = await createUserService(data);
     return user;
