@@ -1,10 +1,10 @@
 import { UserForm } from "@/@types";
 import { createAuthService } from "../services/auth.service";
 
-export async function createAuthController(data: UserForm) {
+export async function createAuthController(email: string, password: string) {
   try {
-    const user = await createAuthService(data);
-    return user;
+    const { uid } = await createAuthService(email, password);
+    return { uid };
   } catch (error: any) {
     throw error;
   }
