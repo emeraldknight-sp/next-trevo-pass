@@ -75,7 +75,6 @@ export function LaminatedButton({
           bg-linear-to-b from-white/40 to-transparent
         "
       />
-
       <span className="relative z-10 font-ubuntu">{children}</span>
     </Component>
   );
