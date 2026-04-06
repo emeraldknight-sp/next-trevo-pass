@@ -1,19 +1,36 @@
-import * as React from "react"
+import { FieldError } from "react-hook-form";
+import { InputHTMLAttributes } from "react";
+import { LucideIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
-  return (
-    <input
-      type={type}
-      data-slot="input"
-      className={cn(
-        "h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-2.5 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
-        className
-      )}
-      {...props}
-    />
-  )
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  icon?: LucideIcon;
+  label: string;
+  error?: FieldError;
 }
 
-export { Input }
+export function Input({
+  icon: Icon,
+  label,
+  error,
+  ...props
+}: InputProps) {
+  return (
+    <>
+      <div className="flex flex-row items-center gap-1 px-2 py-1 border border-slate-200 rounded-md focus-within:ring-2 focus-within:ring-violet-900">
+        <label htmlFor={props.name} className="sr-only">
+          {label}
+        </label>
+        {Icon && <Icon size={18} className="text-slate-500" />}
+        <input
+          {...props}
+          className="w-full text-slate-700 placeholder:text-slate-500 outline-none focus:outline-none focus-visible:ring-0 px-2 py-1"
+        />
+      </div>
+      {error && (
+        <span className="text-red-500 text-xs font-ubuntu">
+          {error.message}
+        </span>
+      )}
+    </>
+  );
+}
