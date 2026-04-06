@@ -10,15 +10,7 @@ export const checkDuplicate = async (phone: string, cpf: string) => {
     getDocs(query(usersRef, where("cpf", "==", cpf))),
   ]);
 
-  const duplicatePhone = !phoneSnapshot.empty;
-  const duplicateCpf = !cpfSnapshot.empty;
-
-  if (duplicatePhone)
-    throw new AppError(
-      "auth/phone-already-in-use",
-      "Este telefone já está em uso.",
-    );
-
-  if (duplicateCpf)
-    throw new AppError("auth/cpf-already-in-use", "Este CPF já está em uso.");
+  if (!phoneSnapshot.empty || !cpfSnapshot.empty) {
+    throw new AppError("USER_DUPLICATE", "CPF ou telefone já cadastrado", 409);
+  }
 };
