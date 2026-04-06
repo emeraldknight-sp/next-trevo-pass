@@ -23,7 +23,7 @@ export async function createUserRepository(user: UserCreate) {
   return { ...user };
 }
 
-export async function getUsersRepository(): Promise<UserRead[]> {
+export async function getUsersRepository() {
   const snapshot = await getDocs(usersCollection());
 
   return snapshot.docs.map((doc) => ({
