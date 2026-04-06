@@ -6,11 +6,13 @@ import {
   getQrTransactionsRepository,
   updateQrTransactionByIdRepository,
 } from "../repositories/qr-transaction.repository";
-import { defineEvent } from "@/utils/define-event";
-import { getUserByIdService } from "@/features/users/services/user.service";
-import { serverTimestamp, Timestamp } from "firebase/firestore";
+import { AppError } from "@/utils/app-error";
+import { TransactionCreate, TransactionUpdate } from "@/@types";
 import { User } from "firebase/auth";
-import { TransactionCreate, TransactionRead } from "@/@types";
+import { checkUserPermission } from "@/utils/permissions";
+import { defineEvent } from "@/utils/define-event";
+import { generateQrTimestamps } from "@/utils/timestamps";
+import { getUserByIdService } from "@/features/users/services/user.service";
 
 export async function createQrTransactionService(data: {
   user: User;
@@ -19,36 +21,32 @@ export async function createQrTransactionService(data: {
   amount: number;
 }) {
   const { user, event, referenceId, amount } = data;
-  const generatorUser = await getUserByIdService(user.uid);
+  const { establishmentId, role } = await getUserByIdService(user.uid);
 
-  if (!generatorUser) throw new Error("Falha ao gerar com permissao");
-
-  if (generatorUser.role !== "employee" && generatorUser.role !== "manager") {
-    throw new Error("Sem permissao para gerar QR Code");
-  }
+  checkUserPermission(role, ["employee", "manager", "admin"]);
 
   const { source, type } = defineEvent(event);
-  const expiresAt = new Date(Date.now() + 60 * 1000);
+  const { createdAt, updatedAt, expiresAt } = generateQrTimestamps(60);
   // const points = calculatePoints(amount, generatorUser!.level);
 
   const qrTransaction: TransactionCreate = {
     referenceId,
-    establismentId: generatorUser.establishmentId,
-    createdBy: generatorUser.uid,
-    createdByType: generatorUser.role,
+    establismentId: establishmentId,
+    createdBy: user.uid,
+    createdByType: role,
     amount,
     source,
     type,
-    createdAt: serverTimestamp(),
-    expiresAt: Timestamp.fromDate(expiresAt),
+    createdAt,
+    updatedAt,
+    expiresAt,
     usedAt: null,
     version: 1,
   };
 
-  const { id, transaction } =
-    await createQrTransactionRepository(qrTransaction);
+  const transaction = await createQrTransactionRepository(qrTransaction);
 
-  return { id, expiresAt, version: transaction.version };
+  return transaction;
 }
 
 export async function getQrTransactionsService() {
@@ -58,32 +56,82 @@ export async function getQrTransactionsService() {
 }
 
 export async function getQrTransactionByIdService(qrTransactionId: string) {
+  if (!qrTransactionId) {
+    throw new AppError(
+      "TRANSACTION_ID_REQUIRED",
+      "ID da transação é obrigatório",
+      400,
+    );
+  }
+
   const qrTransaction = await getQrTransactionByIdRepository(qrTransactionId);
 
   if (!qrTransaction) {
-    throw new Error("Transacao nao existe");
+    throw new AppError(
+      "TRANSACTION_NOT_FOUND",
+      "Transação não encontrada",
+      404,
+    );
   }
 
   return qrTransaction;
 }
 
 export async function updateQrTransactionService(
-  id: string,
-  data: Partial<TransactionRead>,
+  qrTransactionId: string,
+  data: TransactionUpdate,
 ) {
-  const qrTransaction = await getQrTransactionByIdService(id);
+  if (!qrTransactionId) {
+    throw new AppError(
+      "TRANSACTION_ID_REQUIRED",
+      "ID da transação é obrigatório",
+      400,
+    );
+  }
 
-  await updateQrTransactionByIdRepository(id, data);
+  const qrTransaction = await getQrTransactionByIdService(qrTransactionId);
 
-  return { ...qrTransaction, ...data };
+  if (qrTransaction!.usedAt && data.usedAt) {
+    throw new AppError(
+      "TRANSACTION_ALREADY_USED",
+      "Transação já utilizada",
+      400,
+    );
+  }
+
+  const forbiddenFields = ["createdBy", "establishmentId"];
+  for (const field of forbiddenFields) {
+    if (field in data) {
+      throw new AppError(
+        "FORBIDDEN_FIELD_UPDATE",
+        `Não é permitido atualizar o campo ${field}`,
+        403,
+      );
+    }
+  }
+
+  const updatedQrTransaction = await updateQrTransactionByIdRepository(
+    qrTransactionId,
+    data,
+  );
+
+  return updatedQrTransaction;
 }
 
-export async function deleteQrTransactionService(id: string) {
-  await getQrTransactionByIdRepository(id);
+export async function deleteQrTransactionService(qrTransactionId: string) {
+  const qrTransaction = await getQrTransactionByIdService(qrTransactionId);
 
-  await deleteQrTransactionRepository(id);
+  if (qrTransaction!.usedAt) {
+    throw new AppError(
+      "CANNOT_DELETE_USED_TRANSACTION",
+      "Não é permitido deletar transações já utilizadas",
+      403,
+    );
+  }
+
+  await deleteQrTransactionRepository(qrTransactionId);
 
   return {
-    message: "Transacao deletada com sucesso",
+    message: "Transação deletada com sucesso",
   };
 }

@@ -11,45 +11,58 @@ import {
   doc,
   getDoc,
   getDocs,
+  serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
 
-export async function createQrTransactionRepository(data: TransactionCreate) {
-  const transactionRef = await addDoc(collection(db, "qr_transactions"), data);
+const QR_TRANSACTIONS_COLLECTION = "qr_transactions";
 
-  return { id: transactionRef.id, transaction: data };
+const qrTransactionsCollection = () =>
+  collection(db, QR_TRANSACTIONS_COLLECTION);
+
+export async function createQrTransactionRepository(data: TransactionCreate) {
+  const ref = await addDoc(qrTransactionsCollection(), data);
+
+  return { id: ref.id, ...data };
 }
 
 export async function getQrTransactionsRepository() {
-  const snapshot = await getDocs(collection(db, "qr_transactions"));
+  const snapshot = await getDocs(qrTransactionsCollection());
 
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as TransactionRead[];
 }
 
-export async function getQrTransactionByIdRepository(
-  id: string,
-): Promise<TransactionRead | null> {
-  const ref = doc(db, "qr_transactions", id);
+export async function getQrTransactionByIdRepository(transactionId: string) {
+  const ref = doc(db, QR_TRANSACTIONS_COLLECTION, transactionId);
   const snapshot = await getDoc(ref);
 
-  if (!snapshot.exists()) {
-    return null;
-  }
+  if (!snapshot.exists()) return null;
 
-  const transaction = snapshot.data() as TransactionRead;
-
-  return transaction;
+  return { id: snapshot.id, ...snapshot.data() } as TransactionRead;
 }
 
 export async function updateQrTransactionByIdRepository(
-  id: string,
+  transactionId: string,
   data: TransactionUpdate,
 ) {
-  const ref = doc(db, "qr_transactions", id);
-  await updateDoc(ref, data);
+  const ref = doc(db, QR_TRANSACTIONS_COLLECTION, transactionId);
+  await updateDoc(ref, { ...data, updatedAt: serverTimestamp() });
+
+  const updatedDoc = await getDoc(ref);
+
+  return {
+    id: updatedDoc.id,
+    ...updatedDoc.data(),
+  } as TransactionRead;
 }
 
-export async function deleteQrTransactionRepository(id: string) {
-  const ref = doc(db, "qr_transactions", id);
+export async function deleteQrTransactionRepository(transactionId: string) {
+  const ref = doc(db, QR_TRANSACTIONS_COLLECTION, transactionId);
+
   await deleteDoc(ref);
+
+  return { id: transactionId };
 }
