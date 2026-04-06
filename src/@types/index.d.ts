@@ -15,6 +15,8 @@ export type UserRole = "customer" | "employee" | "manager" | "admin";
 
 export interface UserCreate extends UserBase {
   id: string;
+  role: UserRole;
+  establishmentId?: string;
   points: number;
   totalPointsEarned: number;
   level: "bronze" | "silver" | "gold" | "vip";
@@ -25,6 +27,8 @@ export interface UserCreate extends UserBase {
 
 export interface UserRead extends UserBase {
   id: string;
+  role: UserRole;
+  establishmentId?: string;
   points: number;
   totalPointsEarned: number;
   level: "bronze" | "silver" | "gold" | "vip";
@@ -55,6 +59,7 @@ export interface TransactionBase {
 
 export interface TransactionCreate extends TransactionBase {
   createdAt: FieldValue;
+  updatedAt: FieldValue;
   expiresAt: Timestamp;
   usedAt: null;
 }
@@ -62,6 +67,7 @@ export interface TransactionCreate extends TransactionBase {
 export interface TransactionRead extends TransactionBase {
   id: string;
   createdAt: Timestamp;
+  updatedAt: Timestamp;
   expiresAt: Timestamp;
   usedAt: Timestamp | null;
 }
