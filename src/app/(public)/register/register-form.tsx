@@ -64,14 +64,11 @@ export const RegisterForm = () => {
       <form className="flex flex-col gap-2 w-full max-w-75">
         <Input
           label="Seu nome e sobrenome"
-          name="name"
-          icon={
-            <User size={20} className="text-slate-500" aria-hidden="true" />
-          }
+          icon={User}
           placeholder="Seu nome e sobrenome"
           type="text"
-          register={register}
-          errors={errors}
+          {...register("name")}
+          error={errors.name}
           required
         />
         <div>
