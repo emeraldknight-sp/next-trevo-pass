@@ -4,17 +4,18 @@ import { useAuth } from "@/contexts/auth-context";
 import { LaminatedButton } from "@/components/ui/laminated";
 import { createQrTransactionController } from "@/features/transactions/controllers/qr-transaction.controller";
 import { useEffect, useState } from "react";
-import QRCode from "react-qr-code";
 import { User } from "firebase/auth";
+import { QRCode } from "@/components/kibo-ui/qr-code";
+import { toast } from "sonner";
 
-interface QrCode {
+export interface QrCode {
   id: string;
   expiresAt: Date;
   version: number;
   payload: string;
 }
 
-interface TransactionForm {
+export interface TransactionForm {
   event: string;
   referenceId: string;
   amount: number;
@@ -44,21 +45,30 @@ export default function Generate() {
 
   const generateCode = async () => {
     try {
-      const { id, expiresAt, version } =
-        await createQrTransactionController(transaction);
+      const result = await createQrTransactionController(transaction);
+
+      if (!result) {
+        toast.error("Nao foi possivel gerar o QR Code", {
+          id: "qr-code-not-created",
+        });
+        return;
+      }
+
+      const { id, expiresAt, version } = result;
+
       const payload = JSON.stringify({
         id,
         version,
-        expiresAt: new Date(expiresAt),
+        expiresAt: expiresAt.toDate(),
       });
-      console.log("BEM AQUI O CODIGO QR: ", payload)
+
       setCode({
         id,
-        expiresAt,
+        expiresAt: expiresAt.toDate(),
         version,
         payload,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Erro ao gerar QR Code: ", error);
     }
   };
@@ -127,8 +137,8 @@ export default function Generate() {
         </form>
       ) : (
         <>
-          <QRCode value={code.payload} size={220} />
-          <span>Expira em {remainingSeconds}s</span>
+          <QRCode data={code.payload} />
+          <p>Expira em {remainingSeconds}s</p>
         </>
       )}
     </div>

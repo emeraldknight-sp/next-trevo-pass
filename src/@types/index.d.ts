@@ -47,7 +47,7 @@ export interface UserForm extends UserBase {
 //TRANSACTION (Base, Create, Read, Update)
 export interface TransactionBase {
   referenceId: string;
-  establismentId?: string;
+  establishmentId?: string;
   customerId?: string;
   createdBy: string;
   createdByType: UserRole;

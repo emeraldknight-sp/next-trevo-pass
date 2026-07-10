@@ -21,6 +21,27 @@ export async function createQrTransactionService(data: {
   amount: number;
 }) {
   const { user, event, referenceId, amount } = data;
+
+  if (!user || !user.uid) {
+    throw new AppError("INVALID_USER", "Usuário inválido", 400);
+  }
+
+  if (!event || !["purchase", "reward", "campaign"].includes(event)) {
+    throw new AppError("INVALID_EVENT", "Evento inválido", 400);
+  }
+
+  if (!referenceId) {
+    throw new AppError(
+      "REFERENCE_ID_REQUIRED",
+      "referenceId é obrigatório",
+      400,
+    );
+  }
+
+  if (typeof amount !== "number" || amount <= 0) {
+    throw new AppError("INVALID_AMOUNT", "Valor inválido", 400);
+  }
+
   const { establishmentId, role } = await getUserByIdService(user.uid);
 
   checkUserPermission(role, ["employee", "manager", "admin"]);
@@ -31,7 +52,7 @@ export async function createQrTransactionService(data: {
 
   const qrTransaction: TransactionCreate = {
     referenceId,
-    establismentId: establishmentId,
+    establishmentId,
     createdBy: user.uid,
     createdByType: role,
     amount,
@@ -87,6 +108,10 @@ export async function updateQrTransactionService(
       "ID da transação é obrigatório",
       400,
     );
+  }
+
+  if (!data || Object.keys(data).length === 0) {
+    throw new AppError("NO_UPDATE_DATA", "Nenhum dado para atualizar", 400);
   }
 
   const qrTransaction = await getQrTransactionByIdService(qrTransactionId);
